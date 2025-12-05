@@ -24,6 +24,9 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -62,6 +65,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/score-disputes/course/**").hasRole("教师")
                 .requestMatchers("/api/score-disputes/**").hasAnyRole("教师", "管理员")
                 
+                // 用户管理相关接口权限配置
+                .requestMatchers("/api/users/profile").authenticated()
+                .requestMatchers("/api/users/{userId}/profile").authenticated()
+                .requestMatchers("/api/users/**").hasRole("管理员")
+                
                 // 其他所有请求都需要认证
                 .anyRequest().authenticated()
             )
@@ -78,6 +86,9 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(customUserDetailsService)
+                .passwordEncoder(new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder())
+                .and()
                 .build();
     }
 }

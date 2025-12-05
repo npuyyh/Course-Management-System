@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cms.dao.UserMapper">
+    
+    <!-- 根据用户名查询用户 -->
+    <select id="selectUserByUsername" parameterType="java.lang.String" resultType="com.cms.entity.User">
+        SELECT * FROM user
+        WHERE username = #{username}
+    </select>
+    
+    <!-- 根据用户ID查询用户 -->
+    <select id="selectUserByUserId" parameterType="java.lang.String" resultType="com.cms.entity.User">
+        SELECT * FROM user
+        WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 查询所有用户 -->
+    <select id="selectAllUsers" resultType="com.cms.entity.User">
+        SELECT * FROM user
+        ORDER BY user_id
+    </select>
+    
+    <!-- 插入用户 -->
+    <insert id="insertUser" parameterType="com.cms.entity.User">
+        INSERT INTO user (user_id, username, password, role, name, dept, phone, email, status, create_time)
+        VALUES (#{userId}, #{username}, #{password}, #{role}, #{name}, #{dept}, #{phone}, #{email}, #{status}, #{createTime})
+    </insert>
+    
+    <!-- 更新用户 -->
+    <update id="updateUser" parameterType="com.cms.entity.User">
+        UPDATE user
+        SET username = #{username},
+            password = #{password},
+            role = #{role},
+            name = #{name},
+            dept = #{dept},
+            phone = #{phone},
+            email = #{email},
+            status = #{status}
+        WHERE user_id = #{userId}
+    </update>
+    
+    <!-- 删除用户 -->
+    <delete id="deleteUser" parameterType="java.lang.String">
+        DELETE FROM user
+        WHERE user_id = #{userId}
+    </delete>
+    
+    <!-- 根据角色查询用户 -->
+    <select id="selectUsersByRole" parameterType="java.lang.String" resultType="com.cms.entity.User">
+        SELECT * FROM user
+        WHERE role = #{role}
+        ORDER BY user_id
+    </select>
+    
+    <!-- 根据院系查询用户 -->
+    <select id="selectUsersByDept" parameterType="java.lang.String" resultType="com.cms.entity.User">
+        SELECT * FROM user
+        WHERE dept = #{dept}
+        ORDER BY user_id
+    </select>
+</mapper>

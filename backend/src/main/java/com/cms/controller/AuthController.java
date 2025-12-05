@@ -129,18 +129,25 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
+            // 从认证对象中获取用户信息
+            org.springframework.security.core.userdetails.User userDetails = 
+                    (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+            String username = userDetails.getUsername();
+            // 获取用户角色（去掉ROLE_前缀）
+            String role = userDetails.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
+
             // 生成JWT令牌
             String token = jwtUtils.generateToken(
-                    loginRequest.getUsername(), // 使用用户名作为用户ID
-                    loginRequest.getUsername(),
-                    loginRequest.getRole());
+                    username, // 使用用户名作为用户ID
+                    username,
+                    role);
 
             // 返回登录响应
             return ResponseEntity.ok(new LoginResponse(
                     token,
-                    loginRequest.getUsername(),
-                    loginRequest.getUsername(),
-                    loginRequest.getRole()));
+                    username,
+                    username,
+                    role));
         } catch (AuthenticationException e) {
             // 认证失败，返回错误信息
             Map<String, String> error = new HashMap<>();
